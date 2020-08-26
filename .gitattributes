@@ -2,4 +2,4 @@ artifacts/hollow-glass-spheres.png filter=lfs diff=lfs merge=lfs -text
 artifacts/shiny-metal.png filter=lfs diff=lfs merge=lfs -text
 artifacts/weekend.png filter=lfs diff=lfs merge=lfs -text
 artifacts/diffuse-spheres.png filter=lfs diff=lfs merge=lfs -text
-artifacts/fuzzy-matel.png filter=lfs diff=lfs merge=lfs -text
+artifacts/fuzzy-metal.png filter=lfs diff=lfs merge=lfs -text
