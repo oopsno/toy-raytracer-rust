@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
-use clap::Clap;
+use clap::Parser;
 use num_cpus;
 use pbr::ProgressBar;
 use rand::prelude::*;
@@ -12,8 +12,8 @@ use toy_raytracer_rust::math::Float;
 use toy_raytracer_rust::scene::{create_scene, Scene};
 use toy_raytracer_rust::vec3::Vec3;
 
-#[derive(Clap)]
-#[clap(version = "0.1")]
+#[derive(Parser, Debug)]
+#[clap(version)]
 struct Opts {
     #[clap(short, long, default_value = "weekend")]
     scene: Scene,
