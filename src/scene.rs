@@ -1,12 +1,10 @@
 use std::str::FromStr;
 use std::sync::Arc;
 
-use rand::prelude::*;
-
 use crate::camera::{Camera, PositionalCamera, SimpleCamera};
 use crate::hittable::{Hittable, HittableList};
 use crate::material::{Dielectric, DummyMaterial, Lambertian, Material, Metal};
-use crate::math::{floats, Float};
+use crate::math::{floats, random, Float};
 use crate::ray::Ray;
 use crate::sphere::Sphere;
 use crate::vec3::Vec3;
@@ -148,8 +146,6 @@ pub fn hollow_glass_sphere(aspect_ratio: Float) -> (Arc<dyn Camera>, HittableLis
 
 // 最终场景
 pub fn random_final_scene(aspect_ratio: Float) -> (Arc<dyn Camera>, HittableList, RayColorFn) {
-    let mut rng = thread_rng();
-    // 随机球体
     let pivot = Vec3::new(4., 0.2, 0.);
     let mut hittables = (-11..11)
         .into_iter()
@@ -157,9 +153,9 @@ pub fn random_final_scene(aspect_ratio: Float) -> (Arc<dyn Camera>, HittableList
             (-11..11)
                 .into_iter()
                 .map(|b| -> Option<Arc<dyn Hittable>> {
-                    let material_score = rng.gen::<Float>();
-                    let x = rng.gen::<Float>();
-                    let z = rng.gen::<Float>();
+                    let material_score = random();
+                    let x = random();
+                    let z = random();
                     let center = Vec3::new(a as Float + 0.9 * x, 0.2, b as Float + 0.9 * z);
                     if (center - pivot).length() > 0.9 {
                         let material: Arc<dyn Material> = if material_score < 0.8 {
@@ -169,7 +165,7 @@ pub fn random_final_scene(aspect_ratio: Float) -> (Arc<dyn Camera>, HittableList
                         } else if material_score < 0.95 {
                             Arc::new(Metal {
                                 albedo: Vec3::random_between(0.5, 1.),
-                                fuzz: 0.5 * rng.gen::<Float>(),
+                                fuzz: 0.5 * random(),
                             })
                         } else {
                             Arc::new(Dielectric::new(1.5))

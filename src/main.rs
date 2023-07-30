@@ -2,21 +2,25 @@ use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 use clap::Parser;
+use fastrand;
+use git_version::git_version;
 use num_cpus;
 use pbr::ProgressBar;
-use rand::prelude::*;
 use rayon::prelude::*;
 
 use toy_raytracer_rust::image;
 use toy_raytracer_rust::math::Float;
 use toy_raytracer_rust::scene::{create_scene, Scene};
-use toy_raytracer_rust::vec3::Vec3;
+use toy_raytracer_rust::vec3::{random, Vec3};
 
 #[derive(Parser, Debug)]
-#[clap(version)]
+#[clap(version=git_version!(), long_about=format!("Yet another toy implementation of https://raytracing.github.io, precision: {}", std::mem::size_of::<Float>() * 8))]
 struct Opts {
     #[clap(short, long, default_value = "weekend")]
     scene: Scene,
+
+    #[clap(long, default_value = "0")]
+    seed: u64,
 
     #[clap(short, long, default_value = "1200")]
     image_width: usize,
@@ -40,6 +44,8 @@ struct Opts {
 fn main() {
     // 解析命令行参数
     let opts: Opts = Opts::parse();
+
+    fastrand::seed(opts.seed);
 
     // 确定图像大小
     let aspect_ratio = opts.aspect_ratio;
@@ -69,7 +75,7 @@ fn main() {
     let pixels = (0..image_height)
         .into_par_iter()
         .map(|y| {
-            let mut rng = rand::thread_rng();
+            fastrand::seed(opts.seed + y as u64);
             let pbar_lock = pbar.clone();
             pbar_lock.lock().unwrap().inc();
             (0..image_width)
@@ -77,9 +83,8 @@ fn main() {
                 .map(|x| {
                     let mut color = Vec3::zeros();
                     for _ in 0..samples_per_pixel {
-                        let u = (x as Float + rng.gen::<Float>()) / (image_width - 1) as Float;
-                        let v =
-                            1. - (y as Float + rng.gen::<Float>()) / (image_height - 1) as Float;
+                        let u = (x as Float + random()) / (image_width - 1) as Float;
+                        let v = 1. - (y as Float + random()) / (image_height - 1) as Float;
                         let ray = camera.ray(u, v);
                         color = color + ray_color(&ray, &world, opts.max_depth);
                     }

@@ -9,12 +9,13 @@ default = ["single-precision"]
 single-precision = []
 
 [dependencies]
-clap = { version = "3.0.14", features = ["derive"] }
-num_cpus = "1.0"
-pbr = "1.0"
+clap = { version = "4.3", features = ["derive"] }
+fastrand = "2.0.0"
+git-version = "0.3.5"
+num_cpus = "1.16"
+pbr = "1.1"
 png = "0.17"
-rand = "0.8"
-rayon = "1.5"
+rayon = "1.7"
 
 [profile.release]
 lto = true
